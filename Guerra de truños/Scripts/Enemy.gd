@@ -28,7 +28,10 @@ func _process(delta):
 			if items > 0:
 				eat()
 			check_vision()
-		"wandering", "picking":
+		"wandering":
+			check_vision()
+			movement()
+		"picking":
 			movement()
 		"eating":
 			pass
@@ -66,12 +69,12 @@ func throw():
 	$ProgressBar.value = 0
 
 func charge_throw():
-	if state == "idle" and caca > 0:
+	if state != "throwing"  and caca > 0:
 		$ProgressBar.show()
 		state = "throwing"
 		$WanderTimer.stop()
 		caca -= 1
-		throw_strength = randi() % 100
+		throw_strength = randi() % 200 + 1
 	if $ProgressBar.value < $ProgressBar.max_value and state == "throwing":
 		$ProgressBar.value += 2
 	if $ProgressBar.value >= throw_strength:
@@ -86,14 +89,13 @@ func take_damage():
 
 func check_vision():
 	for body in $vision.get_overlapping_bodies():
-		if body != self:
-			if state == "idle" and caca > 0:
-				target = body.position
-				charge_throw()
-				return
+		if body != self and (state == "wandering" or state == "idle" or state == "picking") and caca > 0:
+			target = body.position
+			charge_throw()
+			return
 	for area in $vision.get_overlapping_areas():
 		if area.get_parent() != self and not area.get_parent() is KinematicBody2D:
-			if state == "idle" and area.TYPE == "Manzana":
+			if (state == "idle" or state == "wandering") and area.TYPE == "Manzana":
 				direction = area.position - position
 				state = "picking"
 				$WanderTimer.stop()

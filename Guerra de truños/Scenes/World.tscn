@@ -45,7 +45,7 @@ text = "1 - Coger comida caminando encima
 "
 
 [node name="ManzanaSpawnTimer" type="Timer" parent="."]
-wait_time = 2.0
+wait_time = 0.1
 autostart = true
 
 [connection signal="timeout" from="ManzanaSpawnTimer" to="." method="_on_ManzanaSpawnTimer_timeout"]
